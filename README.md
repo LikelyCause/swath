@@ -10,6 +10,47 @@ The point isn't that one model does everything — it's the honest comparison:
 **different foundation models excel at different tasks, and some tasks are still
 hard zero‑shot.** The app makes that visible and quantifiable.
 
+## Why I built this
+
+I wanted a straight answer to a question that benchmark tables usually bury:
+**how well do geospatial foundation models actually perform on real imagery?**
+Rather than read about it, I built a tool to *see* it — and to make the two
+things that normally slow this kind of testing down trivial:
+
+1. **Pull imagery just by selecting on a map.** Draw a box → one click → live
+   high‑resolution imagery (NAIP / Sentinel‑2) from the Microsoft Planetary
+   Computer. No manual scene search, download, mosaic, or reproject.
+2. **Run models from the same page.** Pick a task, pick a model from a dropdown,
+   run it, and see the result overlaid next to the raw image — then score it
+   against free reference data with hard IoU / F1 numbers.
+
+**This is a testing harness, not a production system.** The goal was to make
+model behavior visible and quantifiable, fast — so the honest finding could
+surface on its own: there is no single model that does roads + buildings + land
+cover well zero‑shot. Detect‑then‑segment wins on clean buildings and collapses
+into block‑scale blobs over dense suburbia; roads hit high precision but miss the
+residential street grid; the crop‑trained land‑cover model nails Iowa farmland
+and over‑predicts "cropland" everywhere else. **That comparison is the product.**
+
+### Where it goes next
+
+- **✓ More Prithvi‑EO heads** *(done)* — fine‑tuned Prithvi‑EO‑2.0 heads for
+  burn‑scar and flood, on the same encoder.
+- **✓ Clay as an embeddings demo** *(done)* — Clay and Prithvi‑EO‑2.0 encoders run
+  unsupervised, showing what a foundation model actually outputs (embeddings, not
+  labels) clustered into self‑similar regions.
+- **Train task‑specific specialists** — the research kept pointing to the same
+  answer for the hard cases: zero‑shot foundation models give you blobs; dense
+  building footprints and connected road networks need a *trained* specialist
+  (e.g. a polygon/segmentation head on **SpaceNet** / Inria / DeepGlobe). Proving
+  that — and then building it — is half the value. See
+  [docs/building-extraction-research.md](docs/building-extraction-research.md)
+  for the cited verdict.
+
+> Along the way I added some non‑foundation models too — handy for comparison, if
+> slightly off the central theme. The roadmap above steers it back toward the
+> foundation‑model thesis.
+
 Example outputs (raw imagery | model annotation):
 
 | Building footprints (SAM Everything + ViT-Huge, NAIP) | Land cover (Prithvi-EO 100M vs ESA WorldCover, Sentinel-2) |
