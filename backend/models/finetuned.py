@@ -76,6 +76,26 @@ def _logits(out) -> torch.Tensor:
     return out.output if hasattr(out, "output") else out
 
 
+def _infer(model_id: str, model, t: torch.Tensor) -> np.ndarray:
+    """Forward with a CPU fallback for MPS op gaps. Flood's UperNet decoder pools
+    the 14x14 feature map to non-divisible sizes (3, 6) via AdaptiveAvgPool2d,
+    which Metal rejects outright (and PYTORCH_ENABLE_MPS_FALLBACK doesn't cover, as
+    it's an implemented op erroring on specific sizes). On the first such failure
+    we relocate the model to CPU and cache it there — correct, slightly slower."""
+    dev = next(model.parameters()).device
+    try:
+        with torch.inference_mode():
+            return _logits(model(t.to(dev))).argmax(1)[0].cpu().numpy().astype(np.uint8)
+    except (RuntimeError, NotImplementedError):
+        if dev.type != "mps":
+            raise
+        set_stage("infer", f"{model_id}: MPS op gap → running on CPU…")
+        model = model.to("cpu")
+        _MODELS[model_id] = model
+        with torch.inference_mode():
+            return _logits(model(t.to("cpu"))).argmax(1)[0].cpu().numpy().astype(np.uint8)
+
+
 def segment_finetuned(chip_id: str, model_id: str) -> dict:
     meta = load_chip(chip_id)
     cfg = MODELS[model_id]
@@ -91,8 +111,7 @@ def segment_finetuned(chip_id: str, model_id: str) -> dict:
 
     model = _get_model(model_id)
     set_stage("infer", f"Running {model_id}…")
-    with torch.inference_mode():
-        pred = _logits(model(t)).argmax(1)[0].cpu().numpy().astype(np.uint8)  # (224, 224)
+    pred = _infer(model_id, model, t)  # (224, 224), with MPS->CPU fallback
 
     set_stage("infer", "Colorizing…")
     h0, w0 = pred.shape
