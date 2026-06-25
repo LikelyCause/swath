@@ -1,5 +1,8 @@
 # Swath: Quick-Test Models for Satellite Imagery
 
+[![CI](https://github.com/LikelyCause/swath/actions/workflows/ci.yml/badge.svg)](https://github.com/LikelyCause/swath/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 An interactive app for applying **geospatial foundation models** to remotely
 sensed imagery — **inference only, no training**. Draw an area on the map,
 one‑click fetch high‑resolution imagery, run a foundation model, and compare its
@@ -9,6 +12,8 @@ metrics.
 The point isn't that one model does everything — it's the honest comparison:
 **different foundation models excel at different tasks, and some tasks are still
 hard zero‑shot.** The app makes that visible and quantifiable.
+
+![Building Footprints](docs/footprints_ok.png)
 
 ## Why I built this
 
