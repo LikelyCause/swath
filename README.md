@@ -54,7 +54,7 @@ Example outputs (raw imagery | model annotation):
 
 | Building footprints (SAM Everything + ViT-Huge, NAIP) | Land cover (Prithvi-EO 100M vs ESA WorldCover, Sentinel-2) |
 |---|---|
-| ![buildings](docs/building_footprints_small.png) | ![land cover](docs/land_cover.png) |
+| ![buildings](docs/building_footprints.png) | ![land cover](docs/land_cover.png) |
 
 ---
 
@@ -219,11 +219,7 @@ The frontend proxies `/api` and `/data` to the backend, so just open the fronten
 - Reference data is imperfect (OSM completeness varies; WorldCover is 10 m and a
   different taxonomy than the crop model) — metrics are indicative, not absolute.
 
-![dense buildings](docs/building_footprints.png)
-
-_SAM "segment‑everything" over dense, foliage‑covered suburbia: it finds the
-houses (high recall) but mis‑segments tree canopy as buildings — the precision
-gap the NDVI filter targets. See [docs/building-extraction-research.md](docs/building-extraction-research.md)._
+![water](docs/water_cover.png)
 
 ## License
 
