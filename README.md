@@ -1,4 +1,4 @@
-# Swath — Geospatial Foundation Models, Side by Side
+# Swath — Quick-Test Models for Satellite Imagery
 
 An interactive app for applying **geospatial foundation models** to remotely
 sensed imagery — **inference only, no training**. Draw an area on the map,
