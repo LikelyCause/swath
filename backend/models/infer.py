@@ -15,6 +15,7 @@ from backend.geo.chips import chip_png_path, load_chip
 from backend.progress import set_stage
 
 from .buildings import segment_buildings
+from .embeddings import embed_and_cluster
 from .landcover import classify_landcover
 from .registry import resolve_model
 from .textprompt import segment_by_text
@@ -46,6 +47,18 @@ def run_inference(chip_id: str, task: str, model_id: str, prompt: str | None = N
         res.update(model_id=model_id, cached=False, ms=int((time.time() - t0) * 1000))
         cache.write_text(json.dumps(res))
         set_stage("done", "Land cover ready")
+        return res
+
+    # Foundation-model embeddings -> unsupervised cluster overlay (also raster).
+    if task == "embeddings":
+        cache = DATA_DIR / f"{chip_id}_emb_{model_id}_{PIPE_VERSION}.json"
+        if cache.exists():
+            return {**json.loads(cache.read_text()), "cached": True}
+        t0 = time.time()
+        res = embed_and_cluster(chip_id, model_id)
+        res.update(model_id=model_id, cached=False, ms=int((time.time() - t0) * 1000))
+        cache.write_text(json.dumps(res))
+        set_stage("done", f"{len(res['legend'])} clusters")
         return res
 
     # Resolve the effective text prompt: user text for textprompt, else the

@@ -20,6 +20,7 @@ const TASKS = [
   { id: "buildings", label: "Building footprints" },
   { id: "roads", label: "Roads / lines of communication" },
   { id: "landcover", label: "Land cover" },
+  { id: "embeddings", label: "Foundation embeddings (unsupervised)" },
   { id: "textprompt", label: "Text-prompt segmentation" },
 ];
 
@@ -184,7 +185,7 @@ function App() {
     }
   };
 
-  const canEval = task !== "textprompt";
+  const canEval = task !== "textprompt" && task !== "embeddings";
 
   return (
     <div className="app">

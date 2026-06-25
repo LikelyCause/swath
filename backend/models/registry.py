@@ -47,6 +47,14 @@ TASKS: dict[str, dict] = {
             {"id": "prithvi-100m-crop", "label": "Prithvi-EO-1.0 100M (13-class)", "landcover": True},
         ],
     },
+    "embeddings": {
+        "label": "Foundation embeddings (unsupervised)",
+        "source": "sentinel2",  # GeoFM encoders consume the same 6-band S2 stack
+        "models": [
+            {"id": "prithvi-eo-2-300", "label": "Prithvi-EO-2.0 300M (IBM/NASA)", "embeddings": True},
+            {"id": "clay-v1-base", "label": "Clay v1 base (Clay Foundation)", "embeddings": True},
+        ],
+    },
 }
 
 
